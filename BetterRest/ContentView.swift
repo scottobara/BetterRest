@@ -16,6 +16,13 @@ struct ContentView: View {
     @State private var alertMessage = ""
     //@State private var showingAlert = false
     
+    let formatter: DateComponentsFormatter = {
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .full
+        formatter.allowedUnits = [.hour, .minute]
+        return formatter
+    }()
+    
     
     var body: some View {
         NavigationView {
@@ -49,7 +56,9 @@ struct ContentView: View {
                         self.calculateBedtime()
                     }), step: 0.25) {
                         Text("\(sleepAmount, specifier: "%g") hours")
+                            
                     }
+                    .accessibility(value: toTime(sleepAmount))
                 }
                 
                 Section(header: Text("Daily coffee intake")){
@@ -121,6 +130,12 @@ struct ContentView: View {
         }
         
         //showingAlert = true
+    }
+    
+    func toTime (_ sleepAmount: Double) -> Text {
+        let hours: TimeInterval = sleepAmount * 60 * 60
+        let result = formatter.string(from: hours) ?? "Unknown value"
+        return Text("\(result)")
     }
 }
 
